@@ -10,8 +10,9 @@ import time
 import json
 import pprint
 import torch.nn.functional as F
-from .coco import CocoDataset, CocoHumanPoseEval
-from .models import MODELS
+from coco import CocoDataset, CocoHumanPoseEval
+from models import MODELS
+from torch.utils.tensorboard import SummaryWriter
 
 OPTIMIZERS = {
     'SGD': torch.optim.SGD,
@@ -46,7 +47,8 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser()
     parser.add_argument('config')
     args = parser.parse_args()
-    
+    writer = SummaryWriter() # tensorboard
+
     print('Loading config %s' % args.config)
     with open(args.config, 'r') as f:
         config = json.load(f)
@@ -186,7 +188,9 @@ if __name__ == '__main__':
         test_loss /= len(test_loader)
         
         write_log_entry(logfile_path, epoch, train_loss, test_loss)
-        
-        
+        writer.add_scalar("Loss/train", train_loss, epoch)
+        writer.add_scalar("Loss/test", test_loss, epoch)
+        writer.flush()
         if 'evaluation' in config:
             evaluator.evaluate(model, train_dataset.topology)
+        writer.close()
