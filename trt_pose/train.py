@@ -188,9 +188,12 @@ if __name__ == '__main__':
         test_loss /= len(test_loader)
         
         write_log_entry(logfile_path, epoch, train_loss, test_loss)
+
         writer.add_scalar("Loss/train", train_loss, epoch)
         writer.add_scalar("Loss/test", test_loss, epoch)
         writer.flush()
+
         if 'evaluation' in config:
             evaluator.evaluate(model, train_dataset.topology)
-        writer.close()
+    
+    writer.close() # close when finished training epochs
