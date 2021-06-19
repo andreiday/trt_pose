@@ -7,8 +7,8 @@ class KeypointFollow:
         self.Arm = xarm.Controller('/dev/ttyTHS1', False)
         self.target_servox=90
         self.target_servoy=45
-        self.xservo_pid = tracking.PID.PositionalPID(5, 0.2, 0.35)
-        self.yservo_pid = tracking.PID.PositionalPID(7, 0.4, 0.5)
+        self.xservo_pid = tracking.PID.PositionalPID(2.5, 0.2, 0.35)
+        self.yservo_pid = tracking.PID.PositionalPID(3.5, 0.4, 0.5)
 
     def follow_function(self, x, y):
 
