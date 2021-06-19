@@ -1,0 +1,7 @@
+trt_pose/tasks/human_pose/__pycache__
+trt_pose/trt_pose.egg-info
+build/
+dist/
+tasks/human_pose/train2017
+tasks/human_pose/val2017
+tasks/human_pose/annotations
