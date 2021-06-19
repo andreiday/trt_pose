@@ -46,7 +46,7 @@ def preprocess(image):
 
 
 def main():        
-    frame_rate = 20
+    frame_rate = 15
     prev = 0
     fps_time = 0
     print("Init Camera")
@@ -66,53 +66,69 @@ def main():
 
         if time_elapsed > 1./frame_rate:
             prev = time.time()
-            t0 = time.time()
             frame = camera.read()
+            
+            # preprocess image for inference
             image = cv2.resize(frame, (224,224))
-
             data = preprocess(image)
+
+            # infere, make a prediction on the image
             cmap, paf = model_trt(data)
             cmap, paf = cmap.detach().cpu(), paf.detach().cpu()
+
+            # parse objects (keypoints), counts (how many?), and heatmap peaks from the (confidence map) and (part affinity field)
             counts, objects, peaks = parse_objects(cmap, paf)#, cmap_threshold=0.15, link_threshold=0.15)
-            # draw pose estimation
+            
+            # draw keypoints and skeleton onto image
             draw_objects(image, counts, objects, peaks)
 
+            # get detected person's skeleton and coords
             people = get_points(counts,objects,peaks)
+
             print("\n\nfound {} people".format(len(people)))
+            
+            # if there's at least one person
             if len(people):
+                # get valid coords (!= -1, -1) of the first detected keypoint in the first detected person
                 x, y = get_person_valid_coords(people)
                 
+                # rescale
                 x_scaled = np.interp(x, [1, 224], [1,640])
                 y_scaled = np.interp(y, [1, 224], [1,480])
-                #print(x_scaled, y_scaled)
 
+                #print(x_scaled, y_scaled)
                 #phy = np.pi + np.arctan2(-y_scaled, -x_scaled)
                 #print(phy)
+
+                # recale image
                 image_rescaled = cv2.resize(image, (640,480))
                 print("Scaled x, y:", round(x_scaled),round(y_scaled))
-                frame_point = draw_points_image(image_rescaled, round(x_scaled), round(y_scaled))
 
+                # draw point to be followed and follow it
+                frame_point = draw_points_image(image_rescaled, round(x_scaled), round(y_scaled))
                 kf.follow_function(x_scaled, y_scaled)
+
+                # follower delimiting lines
                 cv2.line(frame_point, (0,240), (640, 240), (255,0,0), 3)
                 cv2.line(frame_point, (320,0), (320, 480), (255,0,0), 3)
 
+                # fps counter
                 cv2.putText(frame_point, "FPS: %f" % (1.0 / (time.time() - fps_time)), (10, 10),
                 cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+
                 cv2.namedWindow('frame_point_track', cv2.WINDOW_NORMAL)
                 cv2.imshow('frame_point_track', frame_point)
+            
             fps_time = time.time()
+            
             #cv2.namedWindow('output', cv2.WINDOW_NORMAL)
             #cv2.imshow('output', image)
-            t1 = time.time()
 
-            print("Execution time (ms):", (t1 - t0)*1000)
             # os.system('cls' if os.name=='nt' else 'clear')
 
         if cv2.waitKey(1) & 0xFF == ord('q'):            
             cv2.destroyAllWindows() 
             break
-
-
 
 def get_points(counts,objects,peaks):
     height = 224
@@ -134,7 +150,6 @@ def get_points(counts,objects,peaks):
         people.append(person)
     return people
 
-    
 
 if __name__ == "__main__":
     main()
