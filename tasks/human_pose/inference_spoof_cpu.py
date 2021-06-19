@@ -12,6 +12,7 @@ from trt_pose.parse_objects import ParseObjects
 import glob
 import pprint
 import math
+from utils_func import draw_points_image, get_person_valid_coords
 
 def open_files(inputDir, ext):
     """
@@ -24,23 +25,6 @@ def open_files(inputDir, ext):
     
     files =  glob.glob(inputDir + '/*' + ext)
     return files
-
-def draw_points_image(frame, x, y):
-    frame = cv2.circle(frame, (x, y), radius=5, color=(0, 255, 0), thickness=-1)
-    cv2.imshow('new point frame', frame)
-    cv2.waitKey(1)
-
-def get_person_valid_coords(people):
-    for idx in range(len(people)):
-        person = people[idx]
-        print("person id:", idx)
-        # print("id: {}, person: {}".format(idx, person))
-        for key in person:
-            x, y = people[idx][key]
-            if x != 1 and y != 1:
-                print(key, x, y)
-            
-                return x, y
 
 
 def model_init(num_parts, num_links):
