@@ -9,9 +9,25 @@ servo4 = xarm.Servo(4)
 servo5 = xarm.Servo(5)
 servo6 = xarm.Servo(6)
 
-for i in range(0,6):
-    arm.setPosition(i, 1500)
-    print(i)
+arm.setPosition(1, 90.0)
+arm.setPosition(2, 90.0)
+arm.setPosition(3, 90.0)
+arm.setPosition(4, 0.0)
+arm.setPosition(5, 55.0)
+arm.setPosition(6, 180.0)
+
+
+# arm.setPosition(1, 1500)
+# arm.setPosition(2, 1500)
+# arm.setPosition(3, 1500)
+# arm.setPosition(4, 1500)
+# arm.setPosition(5, 1000)
+# arm.setPosition(6, 1500)
+
+
+# for i in range(0,6):
+#     arm.setPosition(i+1, 1700)
+#     print(i)
 # battery_voltage = arm.getBatteryVoltage()
 # pos1 = arm.getPosition(6)
 
