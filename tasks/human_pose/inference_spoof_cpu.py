@@ -13,6 +13,7 @@ import glob
 import pprint
 import math
 from utils_func import draw_points_image, get_person_valid_coords
+from tracking.follow_keypoint import KeypointFollow
 
 def open_files(inputDir, ext):
     """
@@ -55,18 +56,15 @@ def preprocess(image):
 
 def main():     
     # todo
-    # implement controller from face follower
-    # class controller
-    # integrate serial communication
-    # measure delay for processing frame
     # implement threads for inference and camera processing
     # check if improvements
    
     frame_rate = 20
     prev = 0
-
+    fps_time = 0
     num_parts = len(human_pose['keypoints'])
     num_links = len(human_pose['skeleton'])
+    kf = KeypointFollow()
 
     parse_objects = ParseObjects(topology)
     draw_objects = DrawObjects(topology)
@@ -113,21 +111,28 @@ def main():
                             x, y = get_person_valid_coords(people)
                             x_scaled = np.interp(x, [1, 224], [1,640])
                             y_scaled = np.interp(y, [1, 224], [1,480])
-                            print(x_scaled, y_scaled)
+                            # print(x_scaled, y_scaled)
 
-                            phy = np.pi + np.arctan2(-y_scaled, -x_scaled)
-                            print(phy)
+                            # phy = np.pi + np.arctan2(-y_scaled, -x_scaled)
+                            # print(phy)
 
                             print(round(x_scaled),round(y_scaled))
-                            draw_points_image(org, round(x_scaled), round(y_scaled))
-
+                            # draw_points_image(org, round(x_scaled), round(y_scaled))
+                            print("Scaled x, y:", round(x_scaled),round(y_scaled))
+                            # draw_points_image(org, round(x_scaled), round(y_scaled))
+                            kf.follow_function(x_scaled, y_scaled)
                             # keypoints = get_keypoints(people)
                             # pprint.pprint(people)
                             # pprint.pprint(keypoints)
                             # pose_frame = image[:, ::-1, :]
                             # pose_frame = bgr8_to_jpeg(image[:, ::-1, :])
+                            # fps counter
+                            fps = (1.0 / (time.time() - fps_time))
+                            print("FPS: %f" % fps)
+                            # os.system('cls' if os.name=='nt' else 'clear')
+                            fps_time = time.time()
 
-                            cv2.imshow('output', image)
+                            # cv2.imshow('output', image)
 
                             if cv2.waitKey(1) & 0xFF == ord('q'):
                                 break

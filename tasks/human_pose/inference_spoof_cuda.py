@@ -33,7 +33,7 @@ def trtInit():
     print("Init TRTModule")
     model_trt = TRTModule()
     print("loading optimized model state")
-    model_trt.load_state_dict(torch.load('/home/jetson/jetson/dizzy/trt_pose/tasks/human_pose/weights/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'))
+    model_trt.load_state_dict(torch.load('/home/jetson/jetson/projects/trt_pose/tasks/human_pose/weights/resnet18_baseline_att_224x224_A_epoch_249_trt.pth'))
     print("Done init TRTModule")
     return model_trt
 
@@ -42,7 +42,7 @@ def model_init(num_parts, num_links):
     print("Init pose model")
     model = trt_pose.models.resnet18_baseline_att(num_parts, 2 * num_links).cuda().eval()
 
-    model.load_state_dict(torch.load('resnet18_baseline_att_224x224_A_epoch_249.pth'))
+    model.load_state_dict(torch.load('weights/resnet18_baseline_att_224x224_A_epoch_249.pth'))
     print("Done init model")
     return model
 
@@ -64,16 +64,21 @@ def preprocess(image):
 def main():        
     frame_rate = 15
     prev = 0
-
-    num_parts = len(human_pose['keypoints'])
-    num_links = len(human_pose['skeleton'])
+    fps_time = 0
+    enable_TRT = False
+    enable_drawings = False
 
     parse_objects = ParseObjects(topology)
     draw_objects = DrawObjects(topology)
-    # model = model_init(num_parts, num_links)
     kf = KeypointFollow()
 
-    model = trtInit()
+    if enable_TRT:
+        model = trtInit()
+    else:
+        num_parts = len(human_pose['keypoints'])
+        num_links = len(human_pose['skeleton'])
+        model = model_init(num_parts, num_links)
+
     try:
         while True:
             videos = open_files('vid','.mp4')
@@ -91,7 +96,6 @@ def main():
                         ret, frame = cap.read()
                         # cv2.imshow('org', frame)
                         frame = cv2.resize(frame, (640,480))
-                        t0 = time.time()
 
                         org = frame
 
@@ -124,12 +128,20 @@ def main():
                             # pose_frame = image[:, ::-1, :]
                             # pose_frame = bgr8_to_jpeg(image[:, ::-1, :])
                             # cv2.imshow('output', image)
-                            t1 = time.time()
+                            # follower delimiting lines
+                            # if enable_drawings:
+                            #     cv2.line(frame_point, (0,240), (640, 240), (255,0,0), 3)
+                            #     cv2.line(frame_point, (320,0), (320, 480), (255,0,0), 3)
 
-                            print("Execution time (ms):", (t1 - t0)*1000)
+                            # fps counter
+                            fps = (1.0 / (time.time() - fps_time))
+                            print("FPS: %f" % fps)
                             # os.system('cls' if os.name=='nt' else 'clear')
+                            fps_time = time.time()
+
                             if cv2.waitKey(1) & 0xFF == ord('q'):
                                 break
+
                         else:
                             print("Unable to read image")
                             break

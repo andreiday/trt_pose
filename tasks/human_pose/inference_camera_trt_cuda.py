@@ -46,7 +46,9 @@ def preprocess(image):
 
 
 def main():        
-    frame_rate = 15
+    frame_rate = 23
+    enable_drawings = False
+
     prev = 0
     fps_time = 0
     print("Init Camera")
@@ -67,7 +69,7 @@ def main():
         if time_elapsed > 1./frame_rate:
             prev = time.time()
             frame = camera.read()
-            
+
             # preprocess image for inference
             image = cv2.resize(frame, (224,224))
             data = preprocess(image)
@@ -92,7 +94,7 @@ def main():
                 # get valid coords (!= -1, -1) of the first detected keypoint in the first detected person
                 x, y = get_person_valid_coords(people)
                 
-                # rescale
+                # rescale chosen keypoint coordinates (224,224) -> (640, 480)
                 x_scaled = np.interp(x, [1, 224], [1,640])
                 y_scaled = np.interp(y, [1, 224], [1,480])
 
@@ -100,29 +102,34 @@ def main():
                 #phy = np.pi + np.arctan2(-y_scaled, -x_scaled)
                 #print(phy)
 
-                # recale image
-                image_rescaled = cv2.resize(image, (640,480))
+                # recale image for drawing the point
+                if enable_drawings:
+                    image_rescaled = cv2.resize(image, (640,480))
                 print("Scaled x, y:", round(x_scaled),round(y_scaled))
 
                 # draw point to be followed and follow it
-                frame_point = draw_points_image(image_rescaled, round(x_scaled), round(y_scaled))
+                if enable_drawings:
+                    frame_point = draw_points_image(image_rescaled, round(x_scaled), round(y_scaled))
                 kf.follow_function(x_scaled, y_scaled)
 
                 # follower delimiting lines
-                cv2.line(frame_point, (0,240), (640, 240), (255,0,0), 3)
-                cv2.line(frame_point, (320,0), (320, 480), (255,0,0), 3)
+                if enable_drawings:
+                    cv2.line(frame_point, (0,240), (640, 240), (255,0,0), 3)
+                    cv2.line(frame_point, (320,0), (320, 480), (255,0,0), 3)
 
                 # fps counter
-                cv2.putText(frame_point, "FPS: %f" % (1.0 / (time.time() - fps_time)), (10, 10),
-                cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
-
-                cv2.namedWindow('frame_point_track', cv2.WINDOW_NORMAL)
-                cv2.imshow('frame_point_track', frame_point)
+                fps = (1.0 / (time.time() - fps_time))
+                print("FPS: %f" % fps)
+                if enable_drawings:
+                    cv2.putText(frame_point, "FPS: %f" % fps, (10, 10),
+                    cv2.FONT_HERSHEY_SIMPLEX, 0.5, (0, 255, 0), 2)
+                    cv2.namedWindow('frame_point_track', cv2.WINDOW_NORMAL)
+                    cv2.imshow('frame_point_track', frame_point)
             
             fps_time = time.time()
-            
-            #cv2.namedWindow('output', cv2.WINDOW_NORMAL)
-            #cv2.imshow('output', image)
+            # if enable_drawings:
+            #     cv2.namedWindow('output', cv2.WINDOW_NORMAL)
+            #     cv2.imshow('output', image)
 
             # os.system('cls' if os.name=='nt' else 'clear')
 

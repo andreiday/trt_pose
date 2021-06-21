@@ -5,3 +5,8 @@ dist/
 tasks/human_pose/train2017
 tasks/human_pose/val2017
 tasks/human_pose/annotations
+.vscode/settings.json
+tasks/human_pose/__pycache__/utils_func.cpython-36.pyc
+tasks/human_pose/tracking/__pycache__/follow_keypoint.cpython-36.pyc
+tasks/human_pose/tracking/__pycache__/PID.cpython-36.pyc
+tasks/human_pose/weights/resnet18_baseline_att_224x224_A_epoch_249_trt.pth
