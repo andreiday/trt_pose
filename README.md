@@ -1,4 +1,4 @@
-# trt_pose_motion_tracking_robot
+# trt_pose_motion_tracking_robot_arm
 
 <img src=".gif" height=256/>
 
