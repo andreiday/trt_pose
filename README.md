@@ -1,8 +1,6 @@
-# trt_pose
+# trt_pose_motion_tracking_robot
 
-> Want to detect hand poses?  Check out the new [trt_pose_hand](http://github.com/NVIDIA-AI-IOT/trt_pose_hand) project for real-time hand pose and gesture recognition!
-
-<img src="https://user-images.githubusercontent.com/4212806/67125332-71a64580-f1a9-11e9-8ee1-e759a38de215.gif" height=256/>
+<img src=".gif" height=256/>
 
 trt_pose is aimed at enabling real-time pose estimation on NVIDIA Jetson.  You may find it useful for other NVIDIA platforms as well.  Currently the project includes
 
@@ -34,11 +32,13 @@ To get started with trt_pose, follow these steps.
     sudo pip3 install tqdm cython pycocotools
     sudo apt-get install python3-matplotlib
     ```
+
+4. Install xarm servo controller library, to do this on NVIDIA Jetson, you can follow [this guide from the author's repo of the library](https://github.com/ccourson/xArmServoController/tree/main/Python#installation-linux-macos-and-raspberry-pi)
     
-### Step 2 - Install trt_pose
+### Step 2 - Install trt_pose from my trt_pose_motion_tracking_robot fork
 
 ```python
-git clone https://github.com/NVIDIA-AI-IOT/trt_pose
+git clone https://github.com/andreiday/trt_pose_motion_tracking_robot
 cd trt_pose
 sudo python3 setup.py install
 ```
@@ -58,15 +58,16 @@ To run the live Jupyter Notebook demo on real-time camera input, follow these st
 
 2. Place the downloaded weights in the [tasks/human_pose](tasks/human_pose) directory
 
-3. Open and follow the [live_demo.ipynb](tasks/human_pose/live_demo.ipynb) notebook
+3. Open and follow the [live_demo.ipynb](tasks/human_pose/notebooks/live_demo.ipynb) notebook
 
     > You may need to modify the notebook, depending on which model you use
 
+To train using COCO dataset on google colab platform follow the [pose_estimation_training.ipynb](tasks/human_pose/notebooks/pose_estimation_training.ipynb)
 ## See also
 
+- [trt_pose](https://github.com/NVIDIA-AI-IOT/trt_pose) - Real-time pose estimation, the project was based on this repository.
 - [trt_pose_hand](http://github.com/NVIDIA-AI-IOT/trt_pose_hand) - Real-time hand pose estimation based on trt_pose
 - [torch2trt](http://github.com/NVIDIA-AI-IOT/torch2trt) - An easy to use PyTorch to TensorRT converter
-
 - [JetBot](http://github.com/NVIDIA-AI-IOT/jetbot) - An educational AI robot based on NVIDIA Jetson Nano
 - [JetRacer](http://github.com/NVIDIA-AI-IOT/jetracer) - An educational AI racecar using NVIDIA Jetson Nano
 - [JetCam](http://github.com/NVIDIA-AI-IOT/jetcam) - An easy to use Python camera interface for NVIDIA Jetson
