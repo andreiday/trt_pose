@@ -43,24 +43,8 @@ cd trt_pose
 sudo python3 setup.py install
 ```
 
-### Step 3 - Run the example notebook
+### Step 3 - Run the example notebook (TODO)
 
-We provide a couple of human pose estimation models pre-trained on the MSCOCO dataset.  The throughput in FPS is shown for each platform
-
-| Model | Jetson Nano | Jetson Xavier | Weights |
-|-------|-------------|---------------|---------|
-| resnet18_baseline_att_224x224_A | 22 | 251 | [download (81MB)](https://drive.google.com/open?id=1XYDdCUdiF2xxx4rznmLb62SdOUZuoNbd) |
-| densenet121_baseline_att_256x256_B | 12 | 101 | [download (84MB)](https://drive.google.com/open?id=13FkJkx7evQ1WwP54UmdiDXWyFMY1OxDU) |
-
-To run the live Jupyter Notebook demo on real-time camera input, follow these steps
- 
-1. Download the model weights using the link in the above table.  
-
-2. Place the downloaded weights in the [tasks/human_pose](tasks/human_pose) directory
-
-3. Open and follow the [live_demo.ipynb](tasks/human_pose/notebooks/live_demo.ipynb) notebook
-
-    > You may need to modify the notebook, depending on which model you use
 
 To train using COCO dataset on google colab platform follow the [pose_estimation_training.ipynb](tasks/human_pose/notebooks/pose_estimation_training.ipynb)
 ## See also
