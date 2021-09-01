@@ -35,7 +35,7 @@ To get started with trt_pose, follow these steps.
 
 4. Install xarm servo controller library, to do this on NVIDIA Jetson, you can follow [this guide from the author's repo of the library](https://github.com/ccourson/xArmServoController/tree/main/Python#installation-linux-macos-and-raspberry-pi)
     
-### Step 2 - Install trt_pose from my trt_pose_motion_tracking_robot fork
+### Step 2 - Install trt_pose from trt_pose_motion_tracking_robot fork
 
 ```python
 git clone https://github.com/andreiday/trt_pose_motion_tracking_robot
